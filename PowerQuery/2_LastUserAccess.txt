@@ -1,0 +1,18 @@
+let
+    Config = CanvasConfig,
+    BaseUrl = Config[BaseUrl],
+    Token = Config[ApiToken],
+    AccountId = Config[AccountId],
+
+    AllReportsUrl = BaseUrl & "/api/v1/accounts/" & AccountId & "/reports",
+    AllReports = Json.Document(Web.Contents(AllReportsUrl, [Headers = [#"Authorization" = "Bearer " & Token]])),
+    ReportList = Table.FromList(AllReports, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    ExpandedReports = Table.ExpandRecordColumn(ReportList, "Column1", {"report", "last_run"}, {"report", "last_run"}),
+    FilteredReport = Table.SelectRows(ExpandedReports, each [report] = "last_user_access_csv"),
+    LastRunRecord = FilteredReport{0}[last_run],
+    FileUrl = LastRunRecord[attachment][url],
+    CsvContent = Web.Contents(FileUrl, [Headers = [#"Authorization" = "Bearer " & Token]]),
+    CsvData = Csv.Document(CsvContent, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+    PromotedHeaders = Table.PromoteHeaders(CsvData, [PromoteAllScalars=true])
+in
+    PromotedHeaders

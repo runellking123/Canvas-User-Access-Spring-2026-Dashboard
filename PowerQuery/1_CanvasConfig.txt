@@ -1,0 +1,9 @@
+let
+    Config = [
+        BaseUrl = "https://wileyc.instructure.com",
+        ApiToken = "4289~99fhGuex8n9Vt9BAEnWaPQAQwYJYfwUr8Ly7aQKyMUNG22Q76TuUx9RFykQMrLYA",
+        AccountId = "1",
+        TermId = "341"
+    ]
+in
+    Config

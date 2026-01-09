@@ -1,0 +1,38 @@
+let
+    Config = CanvasConfig,
+    BaseUrl = Config[BaseUrl],
+    Token = Config[ApiToken],
+    AccountId = Config[AccountId],
+    TermId = Config[TermId],
+
+    StartDate = DateTime.ToText(Date.AddDays(DateTime.LocalNow(), -7), [Format="yyyy-MM-ddT00:00:00.000Z"]),
+
+    TriggerLastUserAccess = Json.Document(
+        Web.Contents(
+            BaseUrl & "/api/v1/accounts/" & AccountId & "/reports/last_user_access_csv",
+            [
+                Headers = [#"Authorization" = "Bearer " & Token, #"Content-Type" = "application/json"],
+                Content = Text.ToBinary("{""parameters"":{""enrollment_term_id"":""" & TermId & """}}")
+            ]
+        )
+    ),
+
+    TriggerAccessLog = Json.Document(
+        Web.Contents(
+            BaseUrl & "/api/v1/accounts/" & AccountId & "/reports/user_course_access_log_csv",
+            [
+                Headers = [#"Authorization" = "Bearer " & Token, #"Content-Type" = "application/json"],
+                Content = Text.ToBinary("{""parameters"":{""enrollment_term_id"":""" & TermId & """,""start_at"":""" & StartDate & """}}")
+            ]
+        )
+    ),
+
+    Result = [
+        LastUserAccess_ReportId = TriggerLastUserAccess[id],
+        LastUserAccess_Status = TriggerLastUserAccess[status],
+        AccessLog_ReportId = TriggerAccessLog[id],
+        AccessLog_Status = TriggerAccessLog[status],
+        Message = "Reports triggered. Wait 3-4 minutes, then refresh LastUserAccess and UserCourseAccessLog queries."
+    ]
+in
+    Result

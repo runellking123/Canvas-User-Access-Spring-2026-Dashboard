@@ -1,0 +1,289 @@
+{
+  "name": "Wiley University Canvas Dashboard",
+  "dataColors": [
+    "#3D2C68",
+    "#65538F",
+    "#414042",
+    "#595959",
+    "#B1B6C1",
+    "#E2E2E2",
+    "#5B4A82",
+    "#8A7BAA",
+    "#6E6E70",
+    "#7A7A7A"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#3D2C68",
+  "tableAccent": "#3D2C68",
+  "textClasses": {
+    "title": {
+      "fontFace": "Open Sans",
+      "fontSize": 16,
+      "fontWeight": "600",
+      "color": "#3D2C68"
+    },
+    "header": {
+      "fontFace": "Open Sans",
+      "fontSize": 12,
+      "fontWeight": "600",
+      "color": "#414042"
+    },
+    "callout": {
+      "fontFace": "Open Sans",
+      "fontSize": 28,
+      "fontWeight": "700",
+      "color": "#3D2C68"
+    },
+    "label": {
+      "fontFace": "Open Sans",
+      "fontSize": 10,
+      "fontWeight": "400",
+      "color": "#595959"
+    }
+  },
+  "good": "#3D2C68",
+  "neutral": "#65538F",
+  "bad": "#C43D3D",
+  "maximum": "#3D2C68",
+  "center": "#B1B6C1",
+  "minimum": "#E2E2E2",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [{"color": {"solid": {"color": "#FFFFFF"}}, "transparency": 0}],
+        "visualHeader": [{"foreground": {"solid": {"color": "#595959"}}}],
+        "border": [{"color": {"solid": {"color": "#E2E2E2"}}, "radius": 4}],
+        "visualTooltip": [{"titleFontColor": {"solid": {"color": "#3D2C68"}}, "valueFontColor": {"solid": {"color": "#414042"}}, "background": {"solid": {"color": "#FFFFFF"}}}],
+        "title": [{"fontColor": {"solid": {"color": "#3D2C68"}}, "fontFamily": "Open Sans", "fontSize": 12, "fontWeight": "600"}]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [{"color": {"solid": {"color": "#3D2C68"}}, "fontFamily": "Open Sans", "fontSize": 28}],
+        "categoryLabels": [{"show": true, "color": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 10}],
+        "wordWrap": [{"show": true}]
+      }
+    },
+    "multiRowCard": {
+      "*": {
+        "dataLabels": [{"color": {"solid": {"color": "#3D2C68"}}, "fontFamily": "Open Sans", "fontSize": 20}],
+        "categoryLabels": [{"color": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 10}],
+        "cardTitle": [{"color": {"solid": {"color": "#3D2C68"}}, "fontFamily": "Open Sans", "fontSize": 12}],
+        "card": [{"outline": "None", "barShow": true, "barColor": {"solid": {"color": "#3D2C68"}}, "barWeight": 3}]
+      }
+    },
+    "slicer": {
+      "*": {
+        "general": [{"outlineColor": {"solid": {"color": "#E2E2E2"}}, "outlineWeight": 1}],
+        "header": [{"fontColor": {"solid": {"color": "#3D2C68"}}, "fontFamily": "Open Sans", "fontSize": 12}],
+        "items": [{"fontColor": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 10, "background": {"solid": {"color": "#FFFFFF"}}}],
+        "selection": [{"selectAllCheckboxEnabled": true, "singleSelect": false}]
+      }
+    },
+    "tableEx": {
+      "*": {
+        "columnHeaders": [{"fontColor": {"solid": {"color": "#FFFFFF"}}, "backColor": {"solid": {"color": "#3D2C68"}}, "fontFamily": "Open Sans", "fontSize": 11}],
+        "values": [{"fontColor": {"solid": {"color": "#414042"}}, "backColor": {"solid": {"color": "#FFFFFF"}}, "fontFamily": "Open Sans", "fontSize": 10}],
+        "total": [{"fontColor": {"solid": {"color": "#FFFFFF"}}, "backColor": {"solid": {"color": "#65538F"}}, "fontFamily": "Open Sans", "fontSize": 10}],
+        "grid": [{"gridVertical": true, "gridVerticalColor": {"solid": {"color": "#E2E2E2"}}, "gridVerticalWeight": 1, "gridHorizontal": true, "gridHorizontalColor": {"solid": {"color": "#E2E2E2"}}, "gridHorizontalWeight": 1, "rowPadding": 4}]
+      }
+    },
+    "pivotTable": {
+      "*": {
+        "columnHeaders": [{"fontColor": {"solid": {"color": "#FFFFFF"}}, "backColor": {"solid": {"color": "#3D2C68"}}, "fontFamily": "Open Sans", "fontSize": 11}],
+        "rowHeaders": [{"fontColor": {"solid": {"color": "#3D2C68"}}, "fontFamily": "Open Sans", "fontSize": 10}],
+        "values": [{"fontColor": {"solid": {"color": "#414042"}}, "backColor": {"solid": {"color": "#FFFFFF"}}, "fontFamily": "Open Sans", "fontSize": 10}],
+        "subTotals": [{"fontColor": {"solid": {"color": "#3D2C68"}}, "backColor": {"solid": {"color": "#E2E2E2"}}}],
+        "grandTotals": [{"fontColor": {"solid": {"color": "#FFFFFF"}}, "backColor": {"solid": {"color": "#65538F"}}}]
+      }
+    },
+    "barChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "clusteredBarChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "hundredPercentStackedBarChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "columnChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "clusteredColumnChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "hundredPercentStackedColumnChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "lineChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "lineStyles": [{"strokeWidth": 3}]
+      }
+    },
+    "areaChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "stackedAreaChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "lineClusteredColumnComboChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "lineStackedColumnComboChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "ribbonChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "waterfallChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "sentimentColors": [{"increaseFill": {"solid": {"color": "#3D2C68"}}, "decreaseFill": {"solid": {"color": "#C43D3D"}}, "totalFill": {"solid": {"color": "#65538F"}}}]
+      }
+    },
+    "pieChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "donutChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "labels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "funnel": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "labels": [{"color": {"solid": {"color": "#FFFFFF"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryLabels": [{"color": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "scatterChart": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "valueAxis": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9, "gridlineColor": {"solid": {"color": "#E2E2E2"}}}],
+        "categoryLabels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "treemap": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "labels": [{"labelColor": {"solid": {"color": "#FFFFFF"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryLabels": [{"labelColor": {"solid": {"color": "#FFFFFF"}}, "fontFamily": "Open Sans", "fontSize": 11}]
+      }
+    },
+    "map": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryLabels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "filledMap": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryLabels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "shapeMap": {
+      "*": {
+        "legend": [{"labelColor": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}],
+        "categoryLabels": [{"color": {"solid": {"color": "#414042"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "gauge": {
+      "*": {
+        "calloutValue": [{"color": {"solid": {"color": "#3D2C68"}}, "fontFamily": "Open Sans", "fontSize": 24}],
+        "target": [{"color": {"solid": {"color": "#414042"}}}],
+        "axis": [{"color": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "kpi": {
+      "*": {
+        "indicator": [{"fontFamily": "Open Sans"}],
+        "trendAxis": [{"color": {"solid": {"color": "#65538F"}}}],
+        "goal": [{"color": {"solid": {"color": "#595959"}}, "fontFamily": "Open Sans", "fontSize": 9}]
+      }
+    },
+    "textbox": {
+      "*": {
+        "general": [{"fontFamily": "Open Sans"}]
+      }
+    },
+    "image": {
+      "*": {
+        "general": [{}]
+      }
+    },
+    "shape": {
+      "*": {
+        "fill": [{"fillColor": {"solid": {"color": "#3D2C68"}}}],
+        "line": [{"lineColor": {"solid": {"color": "#3D2C68"}}}]
+      }
+    }
+  }
+}
