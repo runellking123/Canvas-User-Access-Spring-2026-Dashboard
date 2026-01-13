@@ -239,6 +239,90 @@ The `times viewed` and `times participated` columns are text. Use `SUMX` with `V
 ### Measure shows wrong count
 Ensure the measure filters to `enrollment type = "student"`. The `Active Students` measures should never exceed `Student Count`.
 
+## Scheduled Refresh Solution (Power BI Service)
+
+The original Canvas API approach causes "dynamic data source" errors when trying to schedule refresh in Power BI Service. This solution decouples the data fetch from Power BI.
+
+### Solution Overview
+
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  Canvas LMS     │────▶│  PowerShell      │────▶│  CSV Files      │
+│  API Reports    │     │  Scheduled Task  │     │  (Local)        │
+└─────────────────┘     │  (5:00 AM Daily) │     └────────┬────────┘
+                        └──────────────────┘              │
+                                                          │
+┌─────────────────┐     ┌──────────────────┐              │
+│  Power BI       │◀────│  Personal        │◀─────────────┘
+│  Service        │     │  Gateway         │
+│  (6:00 AM)      │     └──────────────────┘
+└─────────────────┘
+```
+
+### Files for Scheduled Refresh
+
+```
+CanvasDataFetch/
+├── Fetch-CanvasData.ps1       # Main script - fetches fresh Canvas reports
+├── CreateScheduledTask.ps1    # Creates Windows Scheduled Task
+├── UpdatePowerBIQueries.csx   # Tabular Editor script (alternative method)
+├── README.txt                 # Detailed setup instructions
+└── Data/                      # CSV files location (created at runtime)
+    ├── LastUserAccess.csv
+    ├── UserCourseAccessLog.csv
+    └── metadata.json
+```
+
+### Quick Setup
+
+1. **Run the scheduled task creator** (one-time, as Administrator):
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File "C:\Users\ruking\CanvasDataFetch\CreateScheduledTask.ps1"
+   ```
+
+2. **Install Personal Gateway**:
+   - Go to Power BI Service → Dataset Settings → Gateway connection
+   - Click "Install now" for Personal Gateway
+   - Complete installation
+
+3. **Configure Gateway**:
+   - In Dataset Settings, select your Personal Gateway
+   - Click Apply
+
+4. **Set Scheduled Refresh**:
+   - In Dataset Settings → Scheduled refresh
+   - Enable and set to 6:00 AM daily
+
+### Manual Data Refresh
+
+To manually fetch fresh Canvas data:
+```powershell
+powershell -ExecutionPolicy Bypass -File "C:\Users\ruking\CanvasDataFetch\Fetch-CanvasData.ps1"
+```
+
+### Power Query M Code (Static CSV)
+
+The Power BI file uses static file paths instead of dynamic API calls:
+
+**LastUserAccess:**
+```
+let
+    Source = Csv.Document(File.Contents("C:\Users\ruking\CanvasDataFetch\Data\LastUserAccess.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Removed Duplicates" = Table.Distinct(#"Promoted Headers", {"user id"})
+in
+    #"Removed Duplicates"
+```
+
+**UserCourseAccessLog:**
+```
+let
+    Source = Csv.Document(File.Contents("C:\Users\ruking\CanvasDataFetch\Data\UserCourseAccessLog.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+in
+    #"Promoted Headers"
+```
+
 ## License
 
 Internal use only - Wiley University
