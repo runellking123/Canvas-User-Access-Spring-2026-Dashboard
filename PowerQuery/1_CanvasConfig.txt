@@ -1,9 +1,15 @@
 let
     Config = [
         BaseUrl = "https://wileyc.instructure.com",
-        ApiToken = "4289~99fhGuex8n9Vt9BAEnWaPQAQwYJYfwUr8Ly7aQKyMUNG22Q76TuUx9RFykQMrLYA",
+        ApiToken = "YOUR_CANVAS_API_TOKEN",  // Replace with your Canvas API token
         AccountId = "1",
-        TermId = "341"
+        // Multiple terms: Traditional, Graduate I, Adult Degree Completion Program A
+        TermIds = {"341", "347", "345"},
+        TermNames = {
+            "2025-2026 Spring Traditional",
+            "2025-2026 Spring Graduate I",
+            "2025-2026 Spring Adult Degree Completion Program A"
+        }
     ]
 in
     Config

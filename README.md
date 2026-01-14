@@ -1,326 +1,220 @@
 # Canvas User Access Spring 2026 Dashboard
 
-A Power BI dashboard for tracking student engagement and activity in Canvas LMS for Wiley University.
+A Power BI dashboard for tracking student engagement and activity in Canvas LMS for Wiley University. Supports multiple enrollment terms including Traditional, Graduate, and Adult Degree Completion students.
 
 ## Overview
 
-This dashboard connects to the Canvas LMS API to pull user access data and course activity logs, providing insights into:
-- Student enrollment and login activity
+This dashboard pulls Canvas LMS user access data and course activity logs, providing insights into:
+- Student enrollment and login activity across all terms
 - Content engagement (views, participations)
 - At-risk student identification
 - Course-level analytics
-
-## Prerequisites
-
-- **Power BI Desktop** (latest version)
-- **Tabular Editor 3** (for running C# scripts)
-- **Canvas LMS API Token** (with appropriate permissions)
-- **Canvas Reports** enabled for:
-  - Last User Access
-  - User Course Access Log
+- Term-based filtering (Traditional, Graduate, Adult Degree Completion)
 
 ## Project Structure
 
 ```
-├── PowerQuery/              # Power Query M code for data connections
-│   ├── 1_CanvasConfig.txt
-│   ├── 2_LastUserAccess.txt
-│   ├── 3_UserCourseAccessLog.txt
-│   └── 4_TriggerNewReports.txt
-├── TabularEditor/           # Tabular Editor 3 C# scripts
-│   ├── TE3_Capitalize_Columns.csx
-│   ├── TE3_Create_Relationships.csx
-│   ├── TE3_Fixed_All_Measures.csx
-│   ├── TE3_Add_Measure_Descriptions.csx
-│   ├── TE3_Add_Table_Column_Descriptions.csx
-│   └── TE3_Add_Copilot_Instructions.csx
-├── CopilotAI/               # Power BI Copilot instructions and prompts
-│   ├── Canvas_PrepDataForAI_Instructions.txt
-│   ├── Canvas_Copilot_Dashboard_Prompts.txt
-│   ├── Canvas_QA_Questions_By_Folder.txt
-│   └── Canvas_UserAccess_Copilot_Instructions.txt
-├── Theme/                   # Power BI theme file
-│   └── WileyUniversity_PowerBI_Theme.json
-└── SampleExports/           # Sample data exports
-    ├── Active_Students_January_2026.csv
-    └── Inactive_Students_Spring2026.csv
+├── CanvasDataFetch/
+│   ├── Fetch-CanvasData.ps1       # Main script - fetches data from Canvas API
+│   └── CreateScheduledTask.ps1    # Creates Windows scheduled tasks
+├── PowerQuery/
+│   ├── 1_CanvasConfig.txt         # Configuration (reference only)
+│   ├── 2_LastUserAccess.txt       # Power Query for LastUserAccess table
+│   ├── 3_UserCourseAccessLog.txt  # Power Query for UserCourseAccessLog table
+│   └── 4_TriggerNewReports.txt    # Power Query for triggering reports (reference)
+└── Canvas User Access Spring 2026 Dashboard.pbix  # Power BI Dashboard file
 ```
+
+## Data Sources
+
+The dashboard fetches data from three Canvas enrollment terms:
+
+| Term ID | Term Name | Description |
+|---------|-----------|-------------|
+| 341 | 2025-2026 Spring Traditional | Undergraduate students |
+| 347 | 2025-2026 Spring Graduate I | Graduate students |
+| 345 | 2025-2026 Spring Adult Degree Completion Program A | Adult degree students |
+
+## Output Files
+
+The PowerShell script generates these CSV files in `C:\Users\ruking\CanvasDataFetch\Data\`:
+
+| File | Description | Records |
+|------|-------------|---------|
+| LastUserAccess.csv | Student enrollment and last login data | ~1,064 |
+| UserCourseAccessLog.csv | Detailed course activity (last 30 days) | ~91,568 |
+| metadata.json | Fetch metadata and record counts | - |
 
 ## Setup Instructions
 
-### Step 1: Configure Canvas API Connection
+### Prerequisites
 
-1. Open Power BI Desktop
-2. Go to **Home** > **Transform data** > **Advanced Editor**
-3. Create a new blank query and paste the contents of `PowerQuery/1_CanvasConfig.txt`
-4. Replace `YOUR_CANVAS_DOMAIN` with your Canvas instance URL (e.g., `wileyc.instructure.com`)
-5. Replace `YOUR_API_TOKEN` with your Canvas API token
+- Windows 10/11
+- PowerShell 5.1+
+- Power BI Desktop
+- Power BI Personal Gateway (for scheduled refresh)
+- Canvas LMS API Token with report access
 
-### Step 2: Add Data Queries
+### Step 1: Configure the PowerShell Script
 
-Create the following queries by pasting the Power Query code:
+Edit `CanvasDataFetch/Fetch-CanvasData.ps1` and update if needed:
 
-| Order | Query Name | File |
-|-------|------------|------|
-| 1 | CanvasConfig | `PowerQuery/1_CanvasConfig.txt` |
-| 2 | LastUserAccess | `PowerQuery/2_LastUserAccess.txt` |
-| 3 | UserCourseAccessLog | `PowerQuery/3_UserCourseAccessLog.txt` |
-| 4 | TriggerNewReports | `PowerQuery/4_TriggerNewReports.txt` |
-
-### Step 3: Apply Tabular Editor Scripts
-
-Run these scripts in order using Tabular Editor 3:
-
-| Order | Script | Purpose |
-|-------|--------|---------|
-| 1 | `TE3_Capitalize_Columns.csx` | Capitalize column names |
-| 2 | `TE3_Create_Relationships.csx` | Create table relationships |
-| 3 | `TE3_Fixed_All_Measures.csx` | Create all 31 DAX measures |
-| 4 | `TE3_Add_Measure_Descriptions.csx` | Add descriptions for Copilot |
-| 5 | `TE3_Add_Table_Column_Descriptions.csx` | Add table/column descriptions |
-| 6 | `TE3_Add_Copilot_Instructions.csx` | Add model-level Copilot instructions |
-
-**To run a script in Tabular Editor 3:**
-1. Open your Power BI model in Tabular Editor 3
-2. Go to **C# Script** > **New from file**
-3. Select the script file
-4. Press **F5** to run
-5. Save the model (Ctrl+S)
-
-### Step 4: Apply Theme
-
-1. In Power BI Desktop, go to **View** > **Themes** > **Browse for themes**
-2. Select `Theme/WileyUniversity_PowerBI_Theme.json`
-
-### Step 5: Configure Copilot AI
-
-1. Go to **File** > **Options** > **Preview features** > Enable **Copilot**
-2. Go to **Prep data for Copilot AI**
-3. Paste the contents of `CopilotAI/Canvas_PrepDataForAI_Instructions.txt`
-
-## Measures Reference
-
-### Enrollment (5 measures)
-| Measure | Description |
-|---------|-------------|
-| Student Count | Total unique students |
-| Instructor Count | Total unique instructors |
-| TA Count | Total teaching assistants |
-| Observer Count | Total observers |
-| Designer Count | Total course designers |
-
-### Student Activity (8 measures)
-| Measure | Description |
-|---------|-------------|
-| Active Students 7 Days | Students logged in within 7 days |
-| Active Students 30 Days | Students logged in within 30 days |
-| Inactive Students 30 Days | Students not logged in for 30+ days |
-| Never Accessed Students | Students who never logged in |
-| Pct Active 7 Days | % students active in 7 days |
-| Pct Active 30 Days | % students active in 30 days |
-| Pct Inactive 30 Days | % students inactive 30+ days |
-| Pct Never Accessed | % students never logged in |
-
-### Course Metrics (2 measures)
-| Measure | Description |
-|---------|-------------|
-| Total Courses | Total unique courses |
-| Total Sections | Total unique sections |
-
-### Engagement (11 measures)
-| Measure | Description |
-|---------|-------------|
-| Total Views | Total content views by students |
-| Total Participations | Total participations by students |
-| Avg Views Per Student | Average views per student |
-| Avg Participations Per Student | Average participations per student |
-| Assignment Views | Views of assignments |
-| Discussion Views | Views of discussions |
-| Quiz Views | Views of quizzes |
-| Module Views | Views of modules |
-| Page Views | Views of pages |
-| File Views | Views of files |
-| Announcement Views | Views of announcements |
-
-### Engagement Levels (8 measures)
-| Measure | Description | Threshold |
-|---------|-------------|-----------|
-| High Engagement Students | Highly active students | 50+ views |
-| Medium Engagement Students | Moderately active students | 10-49 views |
-| Low Engagement Students | Minimally active students | 1-9 views |
-| Zero Engagement Students | At-risk students | 0 views |
-| Pct High Engagement | % highly engaged | |
-| Pct Medium Engagement | % moderately engaged | |
-| Pct Low Engagement | % low engagement | |
-| Pct Zero Engagement | % at risk | |
-
-## Copilot Prompts
-
-Use the prompts in `CopilotAI/Canvas_Copilot_Dashboard_Prompts.txt` to quickly build dashboard pages:
-
-**Example:**
-```
-Create a report page called Executive Summary with these visuals:
-Four card visuals in a row: Student Count, Active Students 30 Days, Total Courses, Instructor Count from _Measures table
-A donut chart showing Pct High Engagement, Pct Medium Engagement, Pct Low Engagement, Pct Zero Engagement from _Measures table
-A clustered bar chart showing Assignment Views, Quiz Views, Discussion Views, Module Views from _Measures table sorted descending
+```powershell
+$Config = @{
+    BaseUrl = "https://wileyc.instructure.com"
+    ApiToken = "YOUR_API_TOKEN"
+    AccountId = "1"
+}
 ```
 
-## Q&A Questions
+### Step 2: Run Initial Data Fetch
 
-Use natural language questions with Power BI Q&A:
-
-```
-what is the student count
-how many active students 30 days
-show engagement percentages as donut chart
-show content views as bar chart
-top courses by total views
-```
-
-## Theme Colors (Wiley University Brand)
-
-| Color | Hex | Usage |
-|-------|-----|-------|
-| Wildcat Purple | #3D2C68 | Primary |
-| Wiley Purple | #65538F | Secondary |
-| Carbon | #414042 | Text |
-| Gray | #595959 | Labels |
-| Silver | #B1B6C1 | Accents |
-| Light Stone | #E2E2E2 | Backgrounds |
-
-**Font:** Open Sans
-
-## Data Model
-
-```
-┌─────────────────────┐
-│   LastUserAccess    │
-│ (One row per user)  │
-│                     │
-│ • user id (PK)      │
-│ • user name         │
-│ • last access at    │
-└─────────┬───────────┘
-          │
-          │ user id
-          │
-┌─────────▼───────────┐
-│ UserCourseAccessLog │
-│ (Activity details)  │
-│                     │
-│ • user id (FK)      │
-│ • course name       │
-│ • enrollment type   │
-│ • content type      │
-│ • times viewed      │
-│ • times participated│
-└─────────────────────┘
-```
-
-## Important Notes
-
-1. **All columns are imported as TEXT** - The DAX measures handle text-to-number and text-to-date conversions automatically.
-
-2. **Activity measures are STUDENT-ONLY** - All activity measures filter to `enrollment type = "student"` to avoid inflating numbers with instructor activity.
-
-3. **Date format from Canvas API** - Dates come in ISO 8601 format (`2026-01-08T13:49:06-06:00`). Measures parse this format automatically.
-
-4. **Hidden tables** - `CanvasConfig` and `TriggerNewReports` are configuration tables and should be hidden from report view.
-
-## Troubleshooting
-
-### Error: "Cannot convert value '' of type Text to type Date"
-The date column contains empty values. The measures use `IFERROR` to handle this, but ensure you're using `TE3_Fixed_All_Measures.csx`.
-
-### Error: "The function SUM cannot work with values of type String"
-The `times viewed` and `times participated` columns are text. Use `SUMX` with `VALUE()` conversion as shown in the fixed measures script.
-
-### Measure shows wrong count
-Ensure the measure filters to `enrollment type = "student"`. The `Active Students` measures should never exceed `Student Count`.
-
-## Scheduled Refresh Solution (Power BI Service)
-
-The original Canvas API approach causes "dynamic data source" errors when trying to schedule refresh in Power BI Service. This solution decouples the data fetch from Power BI.
-
-### Solution Overview
-
-```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  Canvas LMS     │────▶│  PowerShell      │────▶│  CSV Files      │
-│  API Reports    │     │  Scheduled Task  │     │  (Local)        │
-└─────────────────┘     │  (5:00 AM Daily) │     └────────┬────────┘
-                        └──────────────────┘              │
-                                                          │
-┌─────────────────┐     ┌──────────────────┐              │
-│  Power BI       │◀────│  Personal        │◀─────────────┘
-│  Service        │     │  Gateway         │
-│  (6:00 AM)      │     └──────────────────┘
-└─────────────────┘
-```
-
-### Files for Scheduled Refresh
-
-```
-CanvasDataFetch/
-├── Fetch-CanvasData.ps1       # Main script - fetches fresh Canvas reports
-├── CreateScheduledTask.ps1    # Creates Windows Scheduled Task
-├── UpdatePowerBIQueries.csx   # Tabular Editor script (alternative method)
-├── README.txt                 # Detailed setup instructions
-└── Data/                      # CSV files location (created at runtime)
-    ├── LastUserAccess.csv
-    ├── UserCourseAccessLog.csv
-    └── metadata.json
-```
-
-### Quick Setup
-
-1. **Run the scheduled task creator** (one-time, as Administrator):
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File "C:\Users\ruking\CanvasDataFetch\CreateScheduledTask.ps1"
-   ```
-
-2. **Install Personal Gateway**:
-   - Go to Power BI Service → Dataset Settings → Gateway connection
-   - Click "Install now" for Personal Gateway
-   - Complete installation
-
-3. **Configure Gateway**:
-   - In Dataset Settings, select your Personal Gateway
-   - Click Apply
-
-4. **Set Scheduled Refresh**:
-   - In Dataset Settings → Scheduled refresh
-   - Enable and set to 6:00 AM daily
-
-### Manual Data Refresh
-
-To manually fetch fresh Canvas data:
 ```powershell
 powershell -ExecutionPolicy Bypass -File "C:\Users\ruking\CanvasDataFetch\Fetch-CanvasData.ps1"
 ```
 
-### Power Query M Code (Static CSV)
+This will:
+1. Trigger fresh reports for each term in Canvas
+2. Wait for reports to complete (can take 5-10 minutes)
+3. Download and combine data from all terms
+4. Add TermId and TermName columns to each record
+5. Save combined CSV files
 
-The Power BI file uses static file paths instead of dynamic API calls:
+### Step 3: Set Up Scheduled Tasks
 
-**LastUserAccess:**
+The scheduled tasks run at **6:00 AM** and **3:00 PM** daily:
+
+```powershell
+# Creates two scheduled tasks
+schtasks /Create /TN "Canvas Data Fetch" /TR "powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\Users\ruking\CanvasDataFetch\Fetch-CanvasData.ps1\"" /SC DAILY /ST 06:00
+schtasks /Create /TN "Canvas Data Fetch 3PM" /TR "powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\Users\ruking\CanvasDataFetch\Fetch-CanvasData.ps1\"" /SC DAILY /ST 15:00
+```
+
+### Step 4: Configure Power BI
+
+The Power Query in Power BI reads from local CSV files:
+
+**LastUserAccess Query:**
 ```
 let
-    Source = Csv.Document(File.Contents("C:\Users\ruking\CanvasDataFetch\Data\LastUserAccess.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.None]),
-    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
-    #"Removed Duplicates" = Table.Distinct(#"Promoted Headers", {"user id"})
+    FilePath = "C:\Users\ruking\CanvasDataFetch\Data\LastUserAccess.csv",
+    CsvContent = File.Contents(FilePath),
+    CsvData = Csv.Document(CsvContent, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+    PromotedHeaders = Table.PromoteHeaders(CsvData, [PromoteAllScalars=true])
 in
-    #"Removed Duplicates"
+    PromotedHeaders
 ```
 
-**UserCourseAccessLog:**
+**UserCourseAccessLog Query:**
 ```
 let
-    Source = Csv.Document(File.Contents("C:\Users\ruking\CanvasDataFetch\Data\UserCourseAccessLog.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.None]),
-    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+    FilePath = "C:\Users\ruking\CanvasDataFetch\Data\UserCourseAccessLog.csv",
+    CsvContent = File.Contents(FilePath),
+    CsvData = Csv.Document(CsvContent, [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+    PromotedHeaders = Table.PromoteHeaders(CsvData, [PromoteAllScalars=true])
 in
-    #"Promoted Headers"
+    PromotedHeaders
+```
+
+### Step 5: Install Personal Gateway
+
+1. Go to Power BI Service → Your Workspace → Dataset Settings
+2. Under Gateway connection, click "Install gateway"
+3. Download and install **Personal mode**
+4. Sign in with your Power BI account
+
+### Step 6: Configure Scheduled Refresh in Power BI Service
+
+1. Go to Dataset Settings → Scheduled refresh
+2. Enable scheduled refresh
+3. Add refresh times: **6:30 AM** and **3:30 PM** (30 min after script runs)
+4. Click Apply
+
+## Automation Flow
+
+```
+6:00 AM  → PowerShell fetches fresh Canvas data → Saves to CSV
+6:30 AM  → Power BI Service refreshes from CSV files
+
+3:00 PM  → PowerShell fetches fresh Canvas data → Saves to CSV
+3:30 PM  → Power BI Service refreshes from CSV files
+```
+
+## Dashboard Features
+
+### Filtering by Term
+
+Use the **TermName** slicer to filter data:
+- 2025-2026 Spring Traditional (Undergrad)
+- 2025-2026 Spring Graduate I
+- 2025-2026 Spring Adult Degree Completion Program A
+
+### Key Metrics
+
+| Category | Metrics |
+|----------|---------|
+| Enrollment | Student Count, Instructor Count, TA Count |
+| Activity | Active Students (7/30 days), Inactive Students, Never Accessed |
+| Engagement | Total Views, Total Participations, Views by Content Type |
+| Risk | High/Medium/Low/Zero Engagement percentages |
+
+## Data Columns
+
+### LastUserAccess.csv
+
+| Column | Description |
+|--------|-------------|
+| user id | Canvas user ID |
+| user name | Student name |
+| last access at | Last login timestamp |
+| TermId | Term identifier (341, 347, 345) |
+| TermName | Term display name |
+
+### UserCourseAccessLog.csv
+
+| Column | Description |
+|--------|-------------|
+| user id | Canvas user ID |
+| user name | Student name |
+| course name | Course title |
+| enrollment type | student, teacher, ta, etc. |
+| asset category | content type (assignments, quizzes, etc.) |
+| times viewed | View count |
+| times participated | Participation count |
+| TermId | Term identifier |
+| TermName | Term display name |
+
+## Troubleshooting
+
+### Script times out on UserCourseAccessLog
+
+The script waits up to 600 seconds (10 minutes) for large reports. If it still times out, increase `MaxWaitSeconds` in the `Wait-ForReport` function.
+
+### Power BI refresh fails
+
+1. Ensure your computer is on and connected at refresh time
+2. Verify Personal Gateway is running (check system tray)
+3. Check that CSV files exist in the Data folder
+4. Verify file paths in Power Query match actual file locations
+
+### Scheduled task not running
+
+1. Open Task Scheduler and verify task status
+2. Check task history for errors
+3. Ensure "Run whether user is logged on or not" is configured if needed
+
+## Manual Data Refresh
+
+To manually fetch fresh data:
+
+```powershell
+cd C:\Users\ruking\CanvasDataFetch
+powershell -ExecutionPolicy Bypass -File "Fetch-CanvasData.ps1"
+```
+
+Check the log file for status:
+```powershell
+Get-Content "C:\Users\ruking\CanvasDataFetch\Data\fetch_log.txt" -Tail 50
 ```
 
 ## License
@@ -329,4 +223,4 @@ Internal use only - Wiley University
 
 ## Author
 
-Created with Claude Code assistance for Wiley University Institutional Research.
+Created for Wiley University Institutional Research

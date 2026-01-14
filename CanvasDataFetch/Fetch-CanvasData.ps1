@@ -9,10 +9,16 @@ param(
 # Configuration - Same as your Power BI CanvasConfig
 $Config = @{
     BaseUrl = "https://wileyc.instructure.com"
-    ApiToken = "4289~99fhGuex8n9Vt9BAEnWaPQAQwYJYfwUr8Ly7aQKyMUNG22Q76TuUx9RFykQMrLYA"
+    ApiToken = "YOUR_CANVAS_API_TOKEN"  # Replace with your Canvas API token
     AccountId = "1"
-    TermId = "341"
 }
+
+# Multiple terms to fetch - Traditional, Graduate I, and Adult Degree Completion Program A
+$Terms = @(
+    @{ Id = "341"; Name = "2025-2026 Spring Traditional" },
+    @{ Id = "347"; Name = "2025-2026 Spring Graduate I" },
+    @{ Id = "345"; Name = "2025-2026 Spring Adult Degree Completion Program A" }
+)
 
 # Create output folder if it doesn't exist
 if (-not (Test-Path $OutputFolder)) {
@@ -41,13 +47,13 @@ function Write-Log {
 function Wait-ForReport {
     param(
         [string]$ReportUrl,
-        [int]$MaxWaitSeconds = 300
+        [int]$MaxWaitSeconds = 600
     )
 
     $StartTime = Get-Date
     $Status = "running"
 
-    while ($Status -eq "running" -or $Status -eq "created") {
+    while ($Status -eq "running" -or $Status -eq "created" -or $Status -eq "compiling") {
         Start-Sleep -Seconds 5
 
         $Elapsed = ((Get-Date) - $StartTime).TotalSeconds
@@ -73,63 +79,109 @@ function Wait-ForReport {
 }
 
 try {
-    # ============================================
-    # Fetch LastUserAccess Report - ALWAYS TRIGGER FRESH
-    # ============================================
-    Write-Log "Triggering fresh LastUserAccess report..."
+    # Initialize arrays to hold combined data
+    $AllLastUserAccess = @()
+    $AllUserCourseAccessLog = @()
+    $TermIds = @()
 
-    $TriggerUrl = "$($Config.BaseUrl)/api/v1/accounts/$($Config.AccountId)/reports/last_user_access_csv"
-    $TriggerBody = @{
-        parameters = @{
-            enrollment_term_id = $Config.TermId
+    # Process each term
+    foreach ($Term in $Terms) {
+        Write-Log "============================================"
+        Write-Log "Processing Term: $($Term.Name) (ID: $($Term.Id))"
+        Write-Log "============================================"
+
+        $TermIds += $Term.Id
+
+        # ============================================
+        # Fetch LastUserAccess Report for this term
+        # ============================================
+        Write-Log "Triggering fresh LastUserAccess report for $($Term.Name)..."
+
+        $TriggerUrl = "$($Config.BaseUrl)/api/v1/accounts/$($Config.AccountId)/reports/last_user_access_csv"
+        $TriggerBody = @{
+            parameters = @{
+                enrollment_term_id = $Term.Id
+            }
+        } | ConvertTo-Json
+
+        $TriggerResult = Invoke-RestMethod -Uri $TriggerUrl -Headers $Headers -Method Post -Body $TriggerBody
+        Write-Log "Triggered LastUserAccess report. ID: $($TriggerResult.id), Status: $($TriggerResult.status)"
+
+        # Wait for report to complete
+        $ReportStatusUrl = "$($Config.BaseUrl)/api/v1/accounts/$($Config.AccountId)/reports/last_user_access_csv/$($TriggerResult.id)"
+        $FileUrl = Wait-ForReport -ReportUrl $ReportStatusUrl
+
+        if ($FileUrl) {
+            Write-Log "Downloading LastUserAccess from: $FileUrl"
+            $TempPath = Join-Path $OutputFolder "LastUserAccess_$($Term.Id).csv"
+            Invoke-WebRequest -Uri $FileUrl -Headers $Headers -OutFile $TempPath
+
+            # Read and add term column
+            $Data = Import-Csv -Path $TempPath
+            $Data | ForEach-Object {
+                $_ | Add-Member -NotePropertyName "TermId" -NotePropertyValue $Term.Id -Force
+                $_ | Add-Member -NotePropertyName "TermName" -NotePropertyValue $Term.Name -Force
+            }
+            $AllLastUserAccess += $Data
+            Write-Log "Added $($Data.Count) records from $($Term.Name)"
+            Remove-Item -Path $TempPath -Force
+        } else {
+            Write-Log "WARNING: Could not get LastUserAccess report for $($Term.Name)"
         }
-    } | ConvertTo-Json
 
-    $TriggerResult = Invoke-RestMethod -Uri $TriggerUrl -Headers $Headers -Method Post -Body $TriggerBody
-    Write-Log "Triggered LastUserAccess report. ID: $($TriggerResult.id), Status: $($TriggerResult.status)"
+        # ============================================
+        # Fetch UserCourseAccessLog Report for this term
+        # ============================================
+        Write-Log "Triggering fresh UserCourseAccessLog report for $($Term.Name)..."
 
-    # Wait for report to complete
-    $ReportStatusUrl = "$($Config.BaseUrl)/api/v1/accounts/$($Config.AccountId)/reports/last_user_access_csv/$($TriggerResult.id)"
-    $FileUrl = Wait-ForReport -ReportUrl $ReportStatusUrl
+        $StartDate = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddT00:00:00.000Z")
+        $TriggerUrl = "$($Config.BaseUrl)/api/v1/accounts/$($Config.AccountId)/reports/user_course_access_log_csv"
+        $TriggerBody = @{
+            parameters = @{
+                enrollment_term_id = $Term.Id
+                start_at = $StartDate
+            }
+        } | ConvertTo-Json
 
-    if ($FileUrl) {
-        Write-Log "Downloading LastUserAccess from: $FileUrl"
-        $LastUserAccessPath = Join-Path $OutputFolder "LastUserAccess.csv"
-        Invoke-WebRequest -Uri $FileUrl -Headers $Headers -OutFile $LastUserAccessPath
-        Write-Log "LastUserAccess saved to: $LastUserAccessPath"
-    } else {
-        Write-Log "ERROR: Could not get LastUserAccess report"
+        $TriggerResult = Invoke-RestMethod -Uri $TriggerUrl -Headers $Headers -Method Post -Body $TriggerBody
+        Write-Log "Triggered UserCourseAccessLog report. ID: $($TriggerResult.id), Status: $($TriggerResult.status)"
+
+        # Wait for report to complete
+        $ReportStatusUrl = "$($Config.BaseUrl)/api/v1/accounts/$($Config.AccountId)/reports/user_course_access_log_csv/$($TriggerResult.id)"
+        $FileUrl = Wait-ForReport -ReportUrl $ReportStatusUrl
+
+        if ($FileUrl) {
+            Write-Log "Downloading UserCourseAccessLog from: $FileUrl"
+            $TempPath = Join-Path $OutputFolder "UserCourseAccessLog_$($Term.Id).csv"
+            Invoke-WebRequest -Uri $FileUrl -Headers $Headers -OutFile $TempPath
+
+            # Read and add term column
+            $Data = Import-Csv -Path $TempPath
+            $Data | ForEach-Object {
+                $_ | Add-Member -NotePropertyName "TermId" -NotePropertyValue $Term.Id -Force
+                $_ | Add-Member -NotePropertyName "TermName" -NotePropertyValue $Term.Name -Force
+            }
+            $AllUserCourseAccessLog += $Data
+            Write-Log "Added $($Data.Count) records from $($Term.Name)"
+            Remove-Item -Path $TempPath -Force
+        } else {
+            Write-Log "WARNING: Could not get UserCourseAccessLog report for $($Term.Name)"
+        }
     }
 
     # ============================================
-    # Fetch UserCourseAccessLog Report - ALWAYS TRIGGER FRESH
+    # Save combined data to CSV files
     # ============================================
-    Write-Log "Triggering fresh UserCourseAccessLog report..."
+    Write-Log "============================================"
+    Write-Log "Saving combined data files..."
 
-    $StartDate = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddT00:00:00.000Z")
-    $TriggerUrl = "$($Config.BaseUrl)/api/v1/accounts/$($Config.AccountId)/reports/user_course_access_log_csv"
-    $TriggerBody = @{
-        parameters = @{
-            enrollment_term_id = $Config.TermId
-            start_at = $StartDate
-        }
-    } | ConvertTo-Json
+    $LastUserAccessPath = Join-Path $OutputFolder "LastUserAccess.csv"
+    $AllLastUserAccess | Export-Csv -Path $LastUserAccessPath -NoTypeInformation -Force
+    Write-Log "LastUserAccess saved: $($AllLastUserAccess.Count) total records to $LastUserAccessPath"
 
-    $TriggerResult = Invoke-RestMethod -Uri $TriggerUrl -Headers $Headers -Method Post -Body $TriggerBody
-    Write-Log "Triggered UserCourseAccessLog report. ID: $($TriggerResult.id), Status: $($TriggerResult.status)"
-
-    # Wait for report to complete
-    $ReportStatusUrl = "$($Config.BaseUrl)/api/v1/accounts/$($Config.AccountId)/reports/user_course_access_log_csv/$($TriggerResult.id)"
-    $FileUrl = Wait-ForReport -ReportUrl $ReportStatusUrl
-
-    if ($FileUrl) {
-        Write-Log "Downloading UserCourseAccessLog from: $FileUrl"
-        $UserCourseAccessPath = Join-Path $OutputFolder "UserCourseAccessLog.csv"
-        Invoke-WebRequest -Uri $FileUrl -Headers $Headers -OutFile $UserCourseAccessPath
-        Write-Log "UserCourseAccessLog saved to: $UserCourseAccessPath"
-    } else {
-        Write-Log "ERROR: Could not get UserCourseAccessLog report"
-    }
+    $UserCourseAccessPath = Join-Path $OutputFolder "UserCourseAccessLog.csv"
+    $AllUserCourseAccessLog | Export-Csv -Path $UserCourseAccessPath -NoTypeInformation -Force
+    Write-Log "UserCourseAccessLog saved: $($AllUserCourseAccessLog.Count) total records to $UserCourseAccessPath"
 
     # ============================================
     # Create metadata file with last update time
@@ -137,8 +189,11 @@ try {
     $MetadataPath = Join-Path $OutputFolder "metadata.json"
     $Metadata = @{
         LastUpdated = (Get-Date -Format "yyyy-MM-ddTHH:mm:ss")
-        TermId = $Config.TermId
+        TermIds = $TermIds
+        TermNames = ($Terms | ForEach-Object { $_.Name })
         AccountId = $Config.AccountId
+        TotalLastUserAccessRecords = $AllLastUserAccess.Count
+        TotalUserCourseAccessLogRecords = $AllUserCourseAccessLog.Count
     } | ConvertTo-Json
 
     Set-Content -Path $MetadataPath -Value $Metadata
