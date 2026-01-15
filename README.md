@@ -20,10 +20,22 @@ This dashboard pulls Canvas LMS user access data and course activity logs, provi
 ├── PowerQuery/
 │   ├── 1_CanvasConfig.txt         # Configuration (reference only)
 │   ├── 2_LastUserAccess.txt       # Power Query for LastUserAccess table
-│   ├── 3_UserCourseAccessLog.txt  # Power Query for UserCourseAccessLog table
-│   └── 4_TriggerNewReports.txt    # Power Query for triggering reports (reference)
+│   └── 3_UserCourseAccessLog.txt  # Power Query for UserCourseAccessLog table
 └── Canvas User Access Spring 2026 Dashboard.pbix  # Power BI Dashboard file
 ```
+
+## Important: Data Flow Architecture
+
+This dashboard uses a **local-file-only** approach for Power BI Service compatibility:
+
+```
+Canvas API → PowerShell Script → Local CSV Files → Power BI Gateway → Power BI Service
+```
+
+**Why this approach?**
+- Power BI Service cannot authenticate directly to Canvas API (Bearer token not supported)
+- Using local files allows the On-Premises Gateway to handle data access
+- The PowerShell script handles all Canvas API authentication
 
 ## Data Sources
 
@@ -196,6 +208,27 @@ The script waits up to 600 seconds (10 minutes) for large reports. If it still t
 2. Verify Personal Gateway is running (check system tray)
 3. Check that CSV files exist in the Data folder
 4. Verify file paths in Power Query match actual file locations
+
+### "Invalid credentials for Web source" error
+
+If you see an error like `Failed to update data source credentials: The credentials provided for the Web source are invalid`, your Power BI file contains queries that try to access Canvas API directly.
+
+**Fix this by removing Web-based queries:**
+
+1. Open the `.pbix` file in Power BI Desktop
+2. Go to **Transform Data** (Power Query Editor)
+3. In the Queries pane, look for any queries that reference:
+   - `Web.Contents`
+   - `https://wileyc.instructure.com`
+   - `TriggerNewReports` or similar names
+4. Delete these queries (right-click → Delete)
+5. Keep ONLY queries that use `File.Contents` for local CSV files
+6. Click **Close & Apply**
+7. Re-publish to Power BI Service
+
+The dashboard should only have these data sources:
+- `C:\Users\ruking\CanvasDataFetch\Data\LastUserAccess.csv`
+- `C:\Users\ruking\CanvasDataFetch\Data\UserCourseAccessLog.csv`
 
 ### Scheduled task not running
 
